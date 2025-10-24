@@ -65,36 +65,57 @@ public interface BaseRepository<T extends WritingBaseEntity, Re extends ReadingB
     Optional<Re> findByIdCustom(@Param("type") String type, @Param("id") Integer id);
 
 
-    @Query(value = "SELECT * FROM get_data_by_table_type(:type) AS data " +
-            "WHERE (:nombre IS NULL OR data.nombre_centro ILIKE '%' || :nombre || '%') " +
-            "AND (:departamento IS NULL OR data.departamento ILIKE '%' || :departamento || '%') " +
-            "AND (:provincia IS NULL OR data.provincia ILIKE '%' || :provincia || '%') " +
-            "AND (:distrito IS NULL OR data.distrito ILIKE '%' || :distrito || '%')", nativeQuery = true)
+    @Query(value = """
+    SELECT * FROM get_data_by_table_type(:type) AS data
+    WHERE (:nombre_centro IS NULL OR :nombre_centro = '' OR data.nombre_centro ILIKE '%' || :nombre_centro || '%')
+      AND (:departamento IS NULL OR :departamento = '' OR data.departamento ILIKE '%' || :departamento || '%')
+      AND (:provincia IS NULL OR :provincia = '' OR data.provincia ILIKE '%' || :provincia || '%')
+      AND (:distrito IS NULL OR :distrito = '' OR data.distrito ILIKE '%' || :distrito || '%')
+    """, countQuery = """
+    SELECT COUNT(*) FROM get_data_by_table_type(:type) AS data
+    WHERE (:nombre_centro IS NULL OR :nombre_centro = '' OR data.nombre_centro ILIKE '%' || :nombre_centro || '%')
+      AND (:departamento IS NULL OR :departamento = '' OR data.departamento ILIKE '%' || :departamento || '%')
+      AND (:provincia IS NULL OR :provincia = '' OR data.provincia ILIKE '%' || :provincia || '%')
+      AND (:distrito IS NULL OR :distrito = '' OR data.distrito ILIKE '%' || :distrito || '%')
+    """,
+
+            nativeQuery = true)
     List<Re> findBySearchParams(
             @Param("type") String type,
-            @Param("nombre") String nombre,
+            @Param("nombre_centro") String nombre_centro,
             @Param("departamento") String departamento,
             @Param("provincia") String provincia,
             @Param("distrito") String distrito,
-            @Param("order_params") String[] order_params,
-            @Param("order") String order
+            String[] order_params,
+            String order
     );
 
-    @Query(value = "SELECT * FROM get_data_by_table_type(:type) AS data " +
-            "WHERE (:nombre IS NULL OR data.nombre_centro ILIKE '%' || :nombre || '%') " +
-            "AND (:departamento IS NULL OR data.departamento ILIKE '%' || :departamento || '%') " +
-            "AND (:provincia IS NULL OR data.provincia ILIKE '%' || :provincia || '%') " +
-            "AND (:distrito IS NULL OR data.distrito ILIKE '%' || :distrito || '%')", nativeQuery = true)
+    @Query(value = """
+    SELECT * FROM get_data_by_table_type(:type) AS data
+    WHERE (:nombre_centro IS NULL OR :nombre_centro = '' OR data.nombre_centro ILIKE '%' || :nombre_centro || '%')
+      AND (:departamento IS NULL OR :departamento = '' OR data.departamento ILIKE '%' || :departamento || '%')
+      AND (:provincia IS NULL OR :provincia = '' OR data.provincia ILIKE '%' || :provincia || '%')
+      AND (:distrito IS NULL OR :distrito = '' OR data.distrito ILIKE '%' || :distrito || '%')
+    """,
+            countQuery = """
+    SELECT COUNT(*) FROM get_data_by_table_type(:type) AS data
+    WHERE (:nombre_centro IS NULL OR :nombre_centro = '' OR data.nombre_centro ILIKE '%' || :nombre_centro || '%')
+      AND (:departamento IS NULL OR :departamento = '' OR data.departamento ILIKE '%' || :departamento || '%')
+      AND (:provincia IS NULL OR :provincia = '' OR data.provincia ILIKE '%' || :provincia || '%')
+      AND (:distrito IS NULL OR :distrito = '' OR data.distrito ILIKE '%' || :distrito || '%')
+    """,
+            nativeQuery = true)
     Page<Re> findBySearchParamsPaging(
             @Param("type") String type,
-            @Param("nombre") String nombre,
+            @Param("nombre_centro") String nombre_centro,
             @Param("departamento") String departamento,
             @Param("provincia") String provincia,
             @Param("distrito") String distrito,
             Pageable pageable,
-            @Param("order_params") String[] order_params,
-            @Param("order") String order
+            String[] order_params,
+            String order
     );
+
 
     @Query(value = "CALL insert_centro(:no_ruc, :nombre_centro, :direccion_centro, :email, :phone, :id_distrito, :table_type)",
             nativeQuery = true)

@@ -18,5 +18,4 @@ public class EscuelaServiceImpl
         super(repository);
     }
 
-    // You can add escuela-specific methods here if needed
 }
